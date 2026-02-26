@@ -185,6 +185,115 @@
             background-color: #f00;
             opacity: 0;
         }
+
+        /* ===== ライトモード用オーバーライド ===== */
+        body.light-mode {
+            background: linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 100%);
+            color: #1e293b;
+        }
+
+        body.light-mode .glass-panel {
+            background: rgba(255, 255, 255, 0.75);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        body.light-mode .input-glass {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid #cbd5e1;
+            color: #0f172a;
+        }
+
+        body.light-mode .input-glass:focus {
+            border-color: #3b82f6;
+            background: #ffffff;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+        }
+
+        /* テキストカラーの適応 */
+        body.light-mode .text-gray-200,
+        body.light-mode .text-gray-300,
+        body.light-mode .text-gray-400 {
+            color: #475569 !important;
+        }
+
+        body.light-mode .text-white {
+            color: #0f172a !important;
+        }
+
+        /* 例外：ボタントキストなどは引き続き白にするため .btn-text-white クラスなどを設定すればよいが、
+           今回は親要素で制御 */
+        body.light-mode button[type="submit"] .text-white,
+        body.light-mode button.text-white,
+        body.light-mode .bg-blue-600 .text-white,
+        body.light-mode .nav-tooltip,
+        body.light-mode #toastMsg,
+        body.light-mode #tableCount {
+            color: #ffffff !important;
+        }
+
+        body.light-mode .bg-slate-800,
+        body.light-mode .bg-slate-800\/40,
+        body.light-mode .bg-slate-800\/50,
+        body.light-mode .bg-slate-900\/50,
+        body.light-mode .bg-black\/40 {
+            background-color: rgba(241, 245, 249, 0.8) !important;
+        }
+
+        body.light-mode .text-blue-400 {
+            color: #2563eb !important;
+        }
+
+        body.light-mode .text-blue-300 {
+            color: #3b82f6 !important;
+        }
+
+        body.light-mode .text-red-400 {
+            color: #dc2626 !important;
+        }
+
+        body.light-mode .text-red-300 {
+            color: #ef4444 !important;
+        }
+
+        body.light-mode .text-green-400 {
+            color: #16a34a !important;
+        }
+
+        body.light-mode .text-purple-400 {
+            color: #9333ea !important;
+        }
+
+        body.light-mode .text-orange-400 {
+            color: #ea580c !important;
+        }
+
+        body.light-mode .text-yellow-400 {
+            color: #d97706 !important;
+        }
+
+        body.light-mode .text-yellow-500 {
+            color: #f59e0b !important;
+        }
+
+        body.light-mode .border-gray-700,
+        body.light-mode .border-white\/10 {
+            border-color: #cbd5e1 !important;
+        }
+
+        body.light-mode .game-impact-panel {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(241, 245, 249, 0.95) 100%);
+            border: 2px solid rgba(251, 191, 36, 0.6);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        body.light-mode tbody tr:hover {
+            background-color: rgba(59, 130, 246, 0.05) !important;
+        }
+
+        body.light-mode #loginScreen {
+            background-color: rgba(241, 245, 249, 0.95) !important;
+        }
     </style>
 </head>
 
@@ -220,235 +329,438 @@
     </div>
 
     <!-- メインコンテンツ (初期非表示) -->
-    <div id="appMain" class="max-w-7xl mx-auto space-y-8 hidden opacity-0 transition-opacity duration-500">
-        <!-- ヘッダー -->
-        <div class="glass-panel p-8 text-center animate-fade-in relative z-10">
-            <h1 class="text-4xl font-bold mb-4 text-gradient">Amazon広告アナライザー</h1>
-            <p class="text-gray-300">検索用語レポート(CSV)を読み込み、除外・昇華キーワードと推奨入札額を自動抽出します。</p>
-        </div>
+    <div id="appMain"
+        class="hidden opacity-0 transition-opacity duration-500 fixed inset-0 flex h-screen w-full z-40 bg-transparent">
 
-        <!-- コントロールパネル ＆ アップロード -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 relative z-10">
-            <!-- 判定基準の設定 -->
-            <div class="glass-panel p-6 lg:col-span-1 border-t-4 border-t-blue-500 flex flex-col h-full">
-                <h2 class="text-lg font-semibold mb-4 flex items-center gap-2"><i
-                        class="fa-solid fa-sliders text-blue-400"></i>判定基準・パラメータ設定</h2>
-
-                <div class="space-y-6 flex-grow">
-                    <div>
-                        <div class="flex justify-between items-end mb-1">
-                            <label class="block text-sm text-gray-400" for="minClicks">除外判定のクリック数 (無購入時)</label>
-                            <span class="text-xs text-blue-400 font-mono" id="minClicksVal">10回</span>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <input type="range" id="minClicksSlider" min="1" max="50" value="10"
-                                class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-blue-500">
-                            <input type="number" id="minClicks" value="10" min="1"
-                                class="input-glass w-20 px-2 py-1.5 rounded-lg text-sm text-center">
-                        </div>
-                    </div>
-
-                    <div>
-                        <div class="flex justify-between items-end mb-1">
-                            <label class="block text-sm text-gray-400" for="targetAcos">目標 ACOS (%)</label>
-                            <span class="text-xs text-blue-400 font-mono" id="targetAcosVal">20.0%</span>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <input type="range" id="targetAcosSlider" min="1" max="100" step="0.5" value="20"
-                                class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-blue-500">
-                            <input type="number" id="targetAcos" value="20" min="1" step="0.1"
-                                class="input-glass w-20 px-2 py-1.5 rounded-lg text-sm text-center">
-                        </div>
-                    </div>
-
-                    <div>
-                        <div class="flex justify-between items-end mb-1">
-                            <label class="block text-sm text-gray-400" for="bidFactor">入札強化係数 (昇華キーワード用)</label>
-                            <span class="text-xs text-blue-400 font-mono" id="bidFactorVal">1.2倍</span>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <input type="range" id="bidFactorSlider" min="0.1" max="3.0" step="0.1" value="1.2"
-                                class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-blue-500">
-                            <input type="number" id="bidFactor" value="1.2" step="0.1" min="0.1"
-                                class="input-glass w-20 px-2 py-1.5 rounded-lg text-sm text-center">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 推奨入札額の算出ロジック明記 -->
-                <div class="mt-4 p-3 bg-slate-800/50 rounded-lg border border-slate-700">
-                    <h3 class="text-[11px] font-semibold text-gray-300 mb-1 flex items-center"><i
-                            class="fa-solid fa-calculator mr-1"></i>推奨入札額(Bid)の計算ロジック</h3>
-                    <ul class="text-[10px] text-gray-400 space-y-0.5 list-disc list-inside">
-                        <li>CVR = 購入数 ÷ クリック数</li>
-                        <li>客単価 = 売上 ÷ 購入数</li>
-                        <li>目標CPC = 客単価 × CVR × (目標ACOS ÷ 100)</li>
-                        <li>推奨入札額 = 目標CPC × 入札強化係数 <span class="text-gray-500">(※小数点切り捨て)</span></li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- アップロードパネル -->
+        <!-- 左サイドメニュー -->
+        <aside id="sidebar"
+            class="w-64 glass-panel border-r border-white/10 flex flex-col m-4 mr-0 z-50 rounded-2xl flex-shrink-0 transition-all duration-300 relative">
+            <button onclick="toggleSidebar()"
+                class="absolute -right-3 top-8 bg-blue-600 text-white w-6 h-6 rounded-full flex items-center justify-center hover:bg-blue-500 shadow-lg z-50 transition-transform"
+                id="sidebarToggleBtn">
+                <i class="fa-solid fa-chevron-left text-xs"></i>
+            </button>
             <div
-                class="glass-panel p-6 lg:col-span-2 border-t-4 border-t-purple-500 flex flex-col justify-center h-full">
-                <h2 class="text-xl font-semibold mb-4 flex items-center gap-2"><i
-                        class="fa-solid fa-file-csv text-purple-400"></i>データの読み込み</h2>
-                <div id="dropZone"
-                    class="drop-zone rounded-xl p-8 flex flex-col items-center justify-center cursor-pointer bg-slate-800/50 flex-grow">
-                    <i class="fa-solid fa-cloud-arrow-up text-5xl text-purple-400 mb-4"></i>
-                    <p class="text-lg mb-2 font-medium text-gray-200">ここにCSVファイルをドラッグ＆ドロップ</p>
-                    <p class="text-sm text-gray-400 mb-4">または、クリックしてファイルを選択</p>
-                    <input type="file" id="fileInput" accept=".csv" class="hidden">
-                    <button onclick="document.getElementById('fileInput').click()"
-                        class="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white px-6 py-2 rounded-full font-medium transition-all transform hover:scale-105 shadow-lg">ファイルを選択</button>
-                    <p id="fileNameDisplay" class="mt-4 text-sm text-green-400 font-medium hidden"></p>
-                </div>
-                <div id="statusMessage" class="mt-4 text-center hidden p-3 rounded-lg text-sm"></div>
+                class="p-6 border-b border-white/10 text-center h-[88px] flex items-center justify-center overflow-hidden">
+                <h2 id="sidebarTitle"
+                    class="text-xl font-bold text-gradient tracking-wider whitespace-nowrap transition-opacity duration-300">
+                    Amazon広告調整<br>ツールV2</h2>
+                <h2 id="sidebarTitleShort"
+                    class="text-xl font-bold text-gradient tracking-wider hidden whitespace-nowrap transition-opacity duration-300">
+                    V2</h2>
             </div>
-        </div>
-
-        <!-- 出力・結果セクション (非表示スタート) -->
-        <div id="resultsContainer" class="hidden space-y-8 animate-fade-in-up relative z-10">
-
-            <!-- ====== ゲーム感覚のインパクトパネル ====== -->
-            <div class="game-impact-panel p-8 mt-4 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-6"
-                id="impactBoard">
-                <div class="relative z-10 flex-1">
-                    <h2 class="text-xl font-bold text-gray-300 mb-2 flex items-center"><i
-                            class="fa-solid fa-fire text-orange-500 mr-2 text-2xl"></i>MISSION CLEARED</h2>
-                    <p class="text-sm text-gray-400">今回の最適化で、あなたが<span
-                            class="text-white font-semibold">削減した</span>無駄な広告費の合計</p>
-                </div>
-
-                <div
-                    class="relative z-10 flex flex-col items-center justify-center bg-black/40 rounded-2xl p-6 border border-yellow-500/30 min-w-[300px] transform hover:scale-105 transition-transform cursor-default">
-                    <div class="text-sm text-yellow-500/80 font-bold tracking-widest mb-1 uppercase">Saved Advertising
-                        Cost</div>
+            <nav class="flex-1 p-4 space-y-2 mt-2 overflow-x-hidden">
+                <a href="#" onclick="switchPage('sp')" id="nav-sp"
+                    class="flex items-center px-4 py-3 rounded-lg bg-blue-500/20 text-blue-400 font-medium transition-colors border border-blue-500/30 shadow-[0_0_15px_rgba(59,130,246,0.2)] relative group">
+                    <i class="fa-solid fa-bullseye w-6 text-center flex-shrink-0"></i>
+                    <span class="nav-text whitespace-nowrap ml-3 transition-opacity duration-300">SP広告調整</span>
                     <div
-                        class="text-5xl md:text-6xl font-extrabold drop-shadow-lg tracking-tight flex items-baseline gap-1">
-                        <span class="text-2xl text-yellow-500">¥</span>
-                        <span id="savedCostDisplay" class="number-animate text-yellow-400"
-                            style="text-shadow: 0 0 15px rgba(250, 204, 21, 0.4);">0</span>
-                    </div>
-                </div>
-
-                <div class="relative z-10 flex-1 text-right flex flex-col items-end">
+                        class="hidden absolute left-full ml-2 px-2 py-1 bg-gray-800 text-white text-xs rounded shadow-lg whitespace-nowrap z-50 nav-tooltip pointer-events-none">
+                        SP広告調整</div>
+                </a>
+                <a href="#" onclick="switchPage('sb')" id="nav-sb"
+                    class="flex items-center px-4 py-3 rounded-lg hover:bg-white/5 text-gray-400 hover:text-white transition-colors border border-transparent relative group">
+                    <i class="fa-solid fa-layer-group w-6 text-center flex-shrink-0"></i>
+                    <span class="nav-text whitespace-nowrap ml-3 transition-opacity duration-300">SB広告調整</span>
                     <div
-                        class="bg-red-500/20 text-red-300 border border-red-500/50 px-3 py-1 rounded-full text-xs font-bold mb-2 flex items-center gap-1">
-                        <i class="fa-solid fa-skull-crossbones"></i> 駆逐した無駄クリック: <span id="wastedClicksCount">0</span>回
-                    </div>
-                    <p class="text-xs text-gray-400 max-w-[200px]">※除外対象となったKW/ASINで消費されていた「売上ゼロまたは目標大幅超過」の広告費累計</p>
-                </div>
-                <!-- 紙吹雪コンテナ -->
-                <div id="confettiContainer" class="absolute inset-0 pointer-events-none overflow-hidden rounded-xl">
-                </div>
+                        class="hidden absolute left-full ml-2 px-2 py-1 bg-gray-800 text-white text-xs rounded shadow-lg whitespace-nowrap z-50 nav-tooltip pointer-events-none">
+                        SB広告調整</div>
+                </a>
+                <a href="#" onclick="switchPage('settings')" id="nav-settings"
+                    class="flex items-center px-4 py-3 rounded-lg hover:bg-white/5 text-gray-400 hover:text-white transition-colors border border-transparent relative group">
+                    <i class="fa-solid fa-gear w-6 text-center flex-shrink-0"></i>
+                    <span class="nav-text whitespace-nowrap ml-3 transition-opacity duration-300">設定</span>
+                    <div
+                        class="hidden absolute left-full ml-2 px-2 py-1 bg-gray-800 text-white text-xs rounded shadow-lg whitespace-nowrap z-50 nav-tooltip pointer-events-none">
+                        設定</div>
+                </a>
+            </nav>
+            <div class="p-4 border-t border-white/10 text-xs text-gray-500 text-center overflow-hidden">
+                <span class="nav-text whitespace-nowrap transition-opacity duration-300">v2.0.0</span>
             </div>
+        </aside>
 
-            <h2 class="text-2xl font-bold border-b border-gray-700 pb-2 mt-8"><i
-                    class="fa-solid fa-clipboard-list mr-2 text-indigo-400"></i>コピペ用出力リスト</h2>
+        <!-- メイン画面エリア -->
+        <main class="flex-1 overflow-y-auto p-6 z-40 relative pb-20 scroll-smooth">
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <!-- 除外ASIN -->
-                <div class="glass-panel p-5 border-t-4 border-t-red-500 flex flex-col h-[350px]">
-                    <div class="flex justify-between items-center mb-3">
-                        <h3 class="text-md font-bold text-red-400"><i class="fa-solid fa-store-slash mr-1"></i>除外ASIN
-                            <span id="countAsin"
-                                class="bg-red-500/20 text-red-300 text-xs px-2 py-0.5 rounded ml-1">0</span>
-                        </h3>
-                        <button onclick="copyToClipboard('outAsin')"
-                            class="text-gray-400 hover:text-white transition-colors" title="コピー"><i
-                                class="fa-regular fa-copy"></i></button>
-                    </div>
-                    <textarea id="outAsin" readonly
-                        class="input-glass w-full flex-grow p-3 rounded-lg resize-none text-xs font-mono"></textarea>
+            <!-- SP Page (既存メインコンテンツ) -->
+            <div id="page-sp" class="max-w-7xl mx-auto space-y-8 page-content block relative">
+                <!-- ヘッダー -->
+                <div class="glass-panel p-8 text-center animate-fade-in relative z-10">
+                    <h1 class="text-4xl font-bold mb-4 text-gradient">SP広告調整</h1>
+                    <p class="text-gray-300">検索用語レポート(CSV)を読み込み、除外・昇華キーワードと推奨入札額を自動抽出します。</p>
                 </div>
 
-                <!-- 除外キーワード -->
-                <div class="glass-panel p-5 border-t-4 border-t-orange-500 flex flex-col h-[350px]">
-                    <div class="flex justify-between items-center mb-3">
-                        <h3 class="text-md font-bold text-orange-400"><i class="fa-solid fa-ban mr-1"></i>除外キーワード <span
-                                id="countKwEx"
-                                class="bg-orange-500/20 text-orange-300 text-xs px-2 py-0.5 rounded ml-1">0</span></h3>
-                        <button onclick="copyToClipboard('outKwEx')"
-                            class="text-gray-400 hover:text-white transition-colors" title="コピー"><i
-                                class="fa-regular fa-copy"></i></button>
-                    </div>
-                    <textarea id="outKwEx" readonly
-                        class="input-glass w-full flex-grow p-3 rounded-lg resize-none text-xs font-mono"></textarea>
-                </div>
+                <!-- コントロールパネル ＆ アップロード -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 relative z-10">
+                    <!-- 判定基準の設定 -->
+                    <div class="glass-panel p-6 lg:col-span-1 border-t-4 border-t-blue-500 flex flex-col h-full">
+                        <h2 class="text-lg font-semibold mb-4 flex items-center gap-2"><i
+                                class="fa-solid fa-sliders text-blue-400"></i>判定基準・パラメータ設定</h2>
 
-                <!-- 昇華キーワード (Bidつき) -->
-                <div class="glass-panel p-5 border-t-4 border-t-green-500 flex flex-col h-[350px]">
-                    <div class="flex justify-between items-center mb-3">
-                        <div class="group relative">
-                            <h3 class="text-md font-bold text-green-400 flex items-center cursor-help">
-                                <i class="fa-solid fa-arrow-trend-up mr-1"></i>昇華KW <span
-                                    class="text-[10px] text-gray-400 ml-1 font-normal">(語句, 入札額)</span>
-                                <span id="countKwUp"
-                                    class="bg-green-500/20 text-green-300 text-xs px-2 py-0.5 rounded ml-2">0</span>
-                            </h3>
+                        <div class="space-y-6 flex-grow">
+                            <!-- 除外設定グループ -->
+                            <div
+                                class="p-4 bg-slate-800/40 rounded-xl border border-red-500/20 shadow-inner group transition-all hover:bg-slate-800/60">
+                                <h3 class="text-sm font-bold text-red-400 mb-2 flex items-center"><i
+                                        class="fa-solid fa-ban mr-2"></i>除外設定 (無駄な広告費の削減)</h3>
+                                <p
+                                    class="text-xs text-red-300/80 mb-4 bg-red-900/30 p-2 rounded border border-red-500/20 flex items-start gap-2">
+                                    <i class="fa-solid fa-circle-info mt-0.5"></i>
+                                    <span>以下2点は<strong class="text-red-300">「除外設定に必要」</strong>な入力項目です。</span>
+                                </p>
+                                <div class="space-y-5">
+                                    <div>
+                                        <div class="flex justify-between items-end mb-1">
+                                            <label class="block text-sm text-gray-300 font-medium"
+                                                for="minClicks">除外判定のクリック数
+                                                (無購入時)</label>
+                                            <span class="text-xs text-red-400 font-mono" id="minClicksVal">10回</span>
+                                        </div>
+                                        <div class="flex items-center gap-3">
+                                            <input type="range" id="minClicksSlider" min="1" max="50" value="10"
+                                                class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-red-500">
+                                            <input type="number" id="minClicks" value="10" min="1"
+                                                class="input-glass w-20 px-2 py-1.5 rounded-lg text-sm text-center">
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <div class="flex justify-between items-end mb-1">
+                                            <label class="block text-sm text-gray-300 font-medium"
+                                                for="exclusionAcos">除外 ACOS
+                                                (%)</label>
+                                            <span class="text-xs text-red-400 font-mono"
+                                                id="exclusionAcosVal">50.0%</span>
+                                        </div>
+                                        <div class="flex items-center gap-3">
+                                            <input type="range" id="exclusionAcosSlider" min="1" max="200" step="1"
+                                                value="50"
+                                                class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-red-500">
+                                            <input type="number" id="exclusionAcos" value="50" min="1" step="0.1"
+                                                class="input-glass w-20 px-2 py-1.5 rounded-lg text-sm text-center">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 昇華設定グループ -->
+                            <div
+                                class="p-4 bg-slate-800/40 rounded-xl border border-blue-500/20 shadow-inner group transition-all hover:bg-slate-800/60">
+                                <h3 class="text-sm font-bold text-blue-400 mb-2 flex items-center"><i
+                                        class="fa-solid fa-arrow-trend-up mr-2"></i>昇華設定 (優秀キーワードの発掘)</h3>
+                                <p
+                                    class="text-xs text-blue-300/80 mb-4 bg-blue-900/30 p-2 rounded border border-blue-500/20 flex items-start gap-2">
+                                    <i class="fa-solid fa-circle-info mt-0.5"></i>
+                                    <span>以下2点は<strong class="text-blue-300">「昇華設定に必要」</strong>な入力項目です。</span>
+                                </p>
+                                <div class="space-y-5">
+                                    <div>
+                                        <div class="flex justify-between items-end mb-1">
+                                            <label class="block text-sm text-gray-300 font-medium" for="targetAcos">目標
+                                                ACOS
+                                                (%)</label>
+                                            <span class="text-xs text-blue-400 font-mono"
+                                                id="targetAcosVal">20.0%</span>
+                                        </div>
+                                        <div class="flex items-center gap-3">
+                                            <input type="range" id="targetAcosSlider" min="1" max="100" step="0.5"
+                                                value="20"
+                                                class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-blue-500">
+                                            <input type="number" id="targetAcos" value="20" min="1" step="0.1"
+                                                class="input-glass w-20 px-2 py-1.5 rounded-lg text-sm text-center">
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <div class="flex justify-between items-end mb-1">
+                                            <label class="block text-sm text-gray-300 font-medium"
+                                                for="bidFactor">入札強化係数
+                                                (昇華キーワード用)</label>
+                                            <span class="text-xs text-blue-400 font-mono" id="bidFactorVal">1.2倍</span>
+                                        </div>
+                                        <div class="flex items-center gap-3">
+                                            <input type="range" id="bidFactorSlider" min="0.1" max="3.0" step="0.1"
+                                                value="1.2"
+                                                class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-blue-500">
+                                            <input type="number" id="bidFactor" value="1.2" step="0.1" min="0.1"
+                                                class="input-glass w-20 px-2 py-1.5 rounded-lg text-sm text-center">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <button onclick="copyToClipboard('outKwUp')"
-                            class="text-gray-400 hover:text-white transition-colors" title="コピー"><i
-                                class="fa-regular fa-copy"></i></button>
+
+                        <!-- 推奨入札額の算出ロジック明記 -->
+                        <div class="mt-4 p-3 bg-slate-800/50 rounded-lg border border-slate-700">
+                            <h3 class="text-[11px] font-semibold text-gray-300 mb-1 flex items-center"><i
+                                    class="fa-solid fa-calculator mr-1"></i>推奨入札額(Bid)の計算ロジック</h3>
+                            <ul class="text-[10px] text-gray-400 space-y-0.5 list-disc list-inside">
+                                <li>CVR = 購入数 ÷ クリック数</li>
+                                <li>客単価 = 売上 ÷ 購入数</li>
+                                <li>目標CPC = 客単価 × CVR × (目標ACOS ÷ 100)</li>
+                                <li>推奨入札額 = 目標CPC × 入札強化係数 <span class="text-gray-500">(※小数点切り捨て)</span></li>
+                            </ul>
+                        </div>
                     </div>
-                    <textarea id="outKwUp" readonly
-                        class="input-glass w-full flex-grow p-3 rounded-lg resize-none text-xs font-mono"></textarea>
+
+                    <!-- アップロードパネル -->
+                    <div
+                        class="glass-panel p-6 lg:col-span-2 border-t-4 border-t-purple-500 flex flex-col justify-center h-full">
+                        <h2 class="text-xl font-semibold mb-4 flex items-center gap-2"><i
+                                class="fa-solid fa-file-csv text-purple-400"></i>データの読み込み</h2>
+                        <div id="dropZone"
+                            class="drop-zone rounded-xl p-8 flex flex-col items-center justify-center cursor-pointer bg-slate-800/50 flex-grow">
+                            <i class="fa-solid fa-cloud-arrow-up text-5xl text-purple-400 mb-4"></i>
+                            <p class="text-lg mb-2 font-medium text-gray-200">ここにCSVファイルをドラッグ＆ドロップ</p>
+                            <p class="text-sm text-gray-400 mb-4">または、クリックしてファイルを選択</p>
+                            <input type="file" id="fileInput" accept=".csv" class="hidden">
+                            <button onclick="document.getElementById('fileInput').click()"
+                                class="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white px-6 py-2 rounded-full font-medium transition-all transform hover:scale-105 shadow-lg">ファイルを選択</button>
+                            <p id="fileNameDisplay" class="mt-4 text-sm text-green-400 font-medium hidden"></p>
+                        </div>
+                        <div id="statusMessage" class="mt-4 text-center hidden p-3 rounded-lg text-sm"></div>
+                    </div>
                 </div>
 
+                <!-- 出力・結果セクション (非表示スタート) -->
+                <div id="resultsContainer" class="hidden space-y-8 animate-fade-in-up relative z-10">
+
+                    <!-- ====== ゲーム感覚のインパクトパネル ====== -->
+                    <div class="game-impact-panel p-8 mt-4 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-6"
+                        id="impactBoard">
+                        <div class="relative z-10 flex-1">
+                            <h2 class="text-xl font-bold text-gray-300 mb-2 flex items-center"><i
+                                    class="fa-solid fa-fire text-orange-500 mr-2 text-2xl"></i>MISSION CLEARED</h2>
+                            <p class="text-sm text-gray-400">今回の最適化で、あなたが<span
+                                    class="text-white font-semibold">削減した</span>無駄な広告費の合計</p>
+                        </div>
+
+                        <div
+                            class="relative z-10 flex flex-col items-center justify-center bg-black/40 rounded-2xl p-6 border border-yellow-500/30 min-w-[300px] transform hover:scale-105 transition-transform cursor-default">
+                            <div class="text-sm text-yellow-500/80 font-bold tracking-widest mb-1 uppercase">Saved
+                                Advertising
+                                Cost</div>
+                            <div
+                                class="text-5xl md:text-6xl font-extrabold drop-shadow-lg tracking-tight flex items-baseline gap-1">
+                                <span class="text-2xl text-yellow-500">¥</span>
+                                <span id="savedCostDisplay" class="number-animate text-yellow-400"
+                                    style="text-shadow: 0 0 15px rgba(250, 204, 21, 0.4);">0</span>
+                            </div>
+                        </div>
+
+                        <div class="relative z-10 flex-1 text-right flex flex-col items-end">
+                            <div
+                                class="bg-red-500/20 text-red-300 border border-red-500/50 px-3 py-1 rounded-full text-xs font-bold mb-2 flex items-center gap-1">
+                                <i class="fa-solid fa-skull-crossbones"></i> 駆逐した無駄クリック: <span
+                                    id="wastedClicksCount">0</span>回
+                            </div>
+                            <p class="text-xs text-gray-400 max-w-[200px]">※除外対象となったKW/ASINで消費されていた「売上ゼロまたは目標大幅超過」の広告費累計
+                            </p>
+                        </div>
+                        <!-- 紙吹雪コンテナ -->
+                        <div id="confettiContainer"
+                            class="absolute inset-0 pointer-events-none overflow-hidden rounded-xl">
+                        </div>
+                    </div>
+
+                    <h2 class="text-2xl font-bold border-b border-gray-700 pb-2 mt-8"><i
+                            class="fa-solid fa-clipboard-list mr-2 text-indigo-400"></i>コピペ用出力リスト</h2>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- 除外ASIN -->
+                        <div class="glass-panel p-5 border-t-4 border-t-red-500 flex flex-col h-[350px]">
+                            <div class="flex justify-between items-center mb-3">
+                                <h3 class="text-md font-bold text-red-400"><i
+                                        class="fa-solid fa-store-slash mr-1"></i>除外ASIN
+                                    <span id="countAsin"
+                                        class="bg-red-500/20 text-red-300 text-xs px-2 py-0.5 rounded ml-1">0</span>
+                                </h3>
+                                <button onclick="copyToClipboard('outAsin')"
+                                    class="text-gray-400 hover:text-white transition-colors" title="コピー"><i
+                                        class="fa-regular fa-copy"></i></button>
+                            </div>
+                            <textarea id="outAsin" readonly
+                                class="input-glass w-full flex-grow p-3 rounded-lg resize-none text-xs font-mono"></textarea>
+                        </div>
+
+                        <!-- 除外キーワード -->
+                        <div class="glass-panel p-5 border-t-4 border-t-orange-500 flex flex-col h-[350px]">
+                            <div class="flex justify-between items-center mb-3">
+                                <h3 class="text-md font-bold text-orange-400"><i
+                                        class="fa-solid fa-ban mr-1"></i>除外キーワード <span id="countKwEx"
+                                        class="bg-orange-500/20 text-orange-300 text-xs px-2 py-0.5 rounded ml-1">0</span>
+                                </h3>
+                                <button onclick="copyToClipboard('outKwEx')"
+                                    class="text-gray-400 hover:text-white transition-colors" title="コピー"><i
+                                        class="fa-regular fa-copy"></i></button>
+                            </div>
+                            <textarea id="outKwEx" readonly
+                                class="input-glass w-full flex-grow p-3 rounded-lg resize-none text-xs font-mono"></textarea>
+                        </div>
+
+                        <!-- 昇華キーワード (Bidつき) -->
+                        <div class="glass-panel p-5 border-t-4 border-t-green-500 flex flex-col h-[350px]">
+                            <div class="flex justify-between items-center mb-3">
+                                <div class="group relative">
+                                    <h3 class="text-md font-bold text-green-400 flex items-center cursor-help">
+                                        <i class="fa-solid fa-arrow-trend-up mr-1"></i>昇華KW <span
+                                            class="text-[10px] text-gray-400 ml-1 font-normal">(語句, 入札額)</span>
+                                        <span id="countKwUp"
+                                            class="bg-green-500/20 text-green-300 text-xs px-2 py-0.5 rounded ml-2">0</span>
+                                    </h3>
+                                </div>
+                                <button onclick="copyToClipboard('outKwUp')"
+                                    class="text-gray-400 hover:text-white transition-colors" title="コピー"><i
+                                        class="fa-regular fa-copy"></i></button>
+                            </div>
+                            <textarea id="outKwUp" readonly
+                                class="input-glass w-full flex-grow p-3 rounded-lg resize-none text-xs font-mono"></textarea>
+                        </div>
+
+                    </div>
+
+                    <!-- テーブル出力セクション -->
+                    <div class="glass-panel p-6 border-t-4 border-t-blue-500 mt-8">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-xl font-bold"><i
+                                    class="fa-solid fa-table-list mr-2 text-blue-400"></i>判定理由・詳細データ
+                            </h2>
+                            <div class="text-sm text-gray-400 flex items-center gap-4">
+                                <span class="px-2 py-1 bg-gray-800 rounded border border-gray-700">表示件数: <span
+                                        id="tableCount" class="font-bold text-white">0</span>件</span>
+                                <span
+                                    class="px-2 py-1 bg-red-900/40 rounded border border-red-800/50 text-red-300 hidden"
+                                    id="tableWastedCostDisplay">除外対象の無駄消費: ¥0</span>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto rounded-lg border border-gray-700 max-h-[600px] overflow-y-auto">
+                            <table class="w-full text-left text-sm text-gray-300 whitespace-nowrap sticky-header">
+                                <thead class="bg-slate-800 text-gray-200 select-none sticky top-0 z-20 shadow-md">
+                                    <tr>
+                                        <th class="px-4 py-3 font-semibold cursor-pointer hover:bg-slate-700/50 transition-colors group border-b border-gray-700"
+                                            onclick="sortTable('term')">検索用語 / ASIN <i id="sortIcon-term"
+                                                class="fa-solid fa-sort ml-1 text-gray-500 group-hover:text-gray-300"></i>
+                                        </th>
+                                        <th class="px-4 py-3 font-semibold cursor-pointer hover:bg-slate-700/50 transition-colors group border-b border-gray-700"
+                                            onclick="sortTable('type')">判定結果 <i id="sortIcon-type"
+                                                class="fa-solid fa-sort ml-1 text-gray-500 group-hover:text-gray-300"></i>
+                                        </th>
+                                        <th class="px-4 py-3 font-semibold cursor-pointer hover:bg-slate-700/50 transition-colors group border-b border-gray-700"
+                                            onclick="sortTable('reason')">理由 <i id="sortIcon-reason"
+                                                class="fa-solid fa-sort ml-1 text-gray-500 group-hover:text-gray-300"></i>
+                                        </th>
+                                        <th class="px-4 py-3 font-semibold text-right cursor-pointer hover:bg-slate-700/50 transition-colors group border-b border-gray-700"
+                                            onclick="sortTable('clicks')">クリック数 <i id="sortIcon-clicks"
+                                                class="fa-solid fa-sort ml-1 text-gray-500 group-hover:text-gray-300"></i>
+                                        </th>
+                                        <th class="px-4 py-3 font-semibold text-right cursor-pointer hover:bg-slate-700/50 transition-colors group border-b border-gray-700"
+                                            onclick="sortTable('orders')">購入数 <i id="sortIcon-orders"
+                                                class="fa-solid fa-sort ml-1 text-gray-500 group-hover:text-gray-300"></i>
+                                        </th>
+                                        <th class="px-4 py-3 font-semibold text-right cursor-pointer hover:bg-slate-700/50 transition-colors group border-b border-gray-700"
+                                            onclick="sortTable('acos')">ACOS (%) <i id="sortIcon-acos"
+                                                class="fa-solid fa-sort ml-1 text-gray-500 group-hover:text-gray-300"></i>
+                                        </th>
+                                        <th class="px-4 py-3 font-semibold text-right text-red-400 cursor-pointer hover:bg-slate-700/50 transition-colors group border-b border-gray-700"
+                                            onclick="sortTable('spend')">無駄な広告費 <i id="sortIcon-spend"
+                                                class="fa-solid fa-sort ml-1 text-red-500/50 group-hover:text-red-300"></i>
+                                        </th>
+                                        <th class="px-4 py-3 font-semibold text-right text-blue-300 cursor-pointer hover:bg-slate-700/50 transition-colors group border-b border-gray-700"
+                                            onclick="sortTable('bid')">推奨入札額 <i id="sortIcon-bid"
+                                                class="fa-solid fa-sort ml-1 text-blue-500/50 group-hover:text-blue-300"></i>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody id="detailsTableBody" class="divide-y divide-gray-700/50 bg-slate-900/50">
+                                    <!-- JSによってデータが挿入されます -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div> <!-- /resultsContainer -->
+            </div> <!-- /page-sp -->
+
+            <!-- SB Page -->
+            <div id="page-sb" class="max-w-7xl mx-auto space-y-8 page-content hidden relative">
+                <div class="glass-panel p-16 text-center animate-fade-in mt-12 border-t-4 border-t-purple-500">
+                    <div
+                        class="inline-flex items-center justify-center w-24 h-24 rounded-full bg-purple-500/20 text-purple-400 mb-8 border border-purple-500/30 shadow-[0_0_30px_rgba(168,85,247,0.2)]">
+                        <i class="fa-solid fa-layer-group text-4xl"></i>
+                    </div>
+                    <h1
+                        class="text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-500">
+                        SB広告調整</h1>
+                    <p class="text-gray-300 text-lg mb-8">スポンサーブランド広告の最適化機能</p>
+                    <div
+                        class="inline-block px-6 py-2 rounded-full bg-slate-800 border border-slate-700 text-slate-400 text-sm">
+                        <i class="fa-solid fa-person-digging mr-2"></i>現在開発中です
+                    </div>
+                </div>
             </div>
 
-            <!-- テーブル出力セクション -->
-            <div class="glass-panel p-6 border-t-4 border-t-blue-500 mt-8">
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-xl font-bold"><i class="fa-solid fa-table-list mr-2 text-blue-400"></i>判定理由・詳細データ
-                    </h2>
-                    <div class="text-sm text-gray-400 flex items-center gap-4">
-                        <span class="px-2 py-1 bg-gray-800 rounded border border-gray-700">表示件数: <span id="tableCount"
-                                class="font-bold text-white">0</span>件</span>
-                        <span class="px-2 py-1 bg-red-900/40 rounded border border-red-800/50 text-red-300 hidden"
-                            id="tableWastedCostDisplay">除外対象の無駄消費: ¥0</span>
-                    </div>
+            <!-- Settings Page -->
+            <div id="page-settings" class="max-w-7xl mx-auto space-y-8 page-content hidden relative">
+                <!-- 設定ヘッダー -->
+                <div class="glass-panel p-8 text-center animate-fade-in relative z-10 border-t-4 border-t-gray-400">
+                    <h1
+                        class="text-3xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-gray-300 to-gray-500">
+                        設定</h1>
+                    <p class="text-gray-300 text-base">アプリケーションの動作・表示に関する設定を行います。</p>
                 </div>
-                <div class="overflow-x-auto rounded-lg border border-gray-700 max-h-[600px] overflow-y-auto">
-                    <table class="w-full text-left text-sm text-gray-300 whitespace-nowrap sticky-header">
-                        <thead class="bg-slate-800 text-gray-200 select-none sticky top-0 z-20 shadow-md">
-                            <tr>
-                                <th class="px-4 py-3 font-semibold cursor-pointer hover:bg-slate-700/50 transition-colors group border-b border-gray-700"
-                                    onclick="sortTable('term')">検索用語 / ASIN <i id="sortIcon-term"
-                                        class="fa-solid fa-sort ml-1 text-gray-500 group-hover:text-gray-300"></i></th>
-                                <th class="px-4 py-3 font-semibold cursor-pointer hover:bg-slate-700/50 transition-colors group border-b border-gray-700"
-                                    onclick="sortTable('type')">判定結果 <i id="sortIcon-type"
-                                        class="fa-solid fa-sort ml-1 text-gray-500 group-hover:text-gray-300"></i></th>
-                                <th class="px-4 py-3 font-semibold cursor-pointer hover:bg-slate-700/50 transition-colors group border-b border-gray-700"
-                                    onclick="sortTable('reason')">理由 <i id="sortIcon-reason"
-                                        class="fa-solid fa-sort ml-1 text-gray-500 group-hover:text-gray-300"></i></th>
-                                <th class="px-4 py-3 font-semibold text-right cursor-pointer hover:bg-slate-700/50 transition-colors group border-b border-gray-700"
-                                    onclick="sortTable('clicks')">クリック数 <i id="sortIcon-clicks"
-                                        class="fa-solid fa-sort ml-1 text-gray-500 group-hover:text-gray-300"></i></th>
-                                <th class="px-4 py-3 font-semibold text-right cursor-pointer hover:bg-slate-700/50 transition-colors group border-b border-gray-700"
-                                    onclick="sortTable('orders')">購入数 <i id="sortIcon-orders"
-                                        class="fa-solid fa-sort ml-1 text-gray-500 group-hover:text-gray-300"></i></th>
-                                <th class="px-4 py-3 font-semibold text-right cursor-pointer hover:bg-slate-700/50 transition-colors group border-b border-gray-700"
-                                    onclick="sortTable('acos')">ACOS (%) <i id="sortIcon-acos"
-                                        class="fa-solid fa-sort ml-1 text-gray-500 group-hover:text-gray-300"></i></th>
-                                <th class="px-4 py-3 font-semibold text-right text-red-400 cursor-pointer hover:bg-slate-700/50 transition-colors group border-b border-gray-700"
-                                    onclick="sortTable('spend')">無駄な広告費 <i id="sortIcon-spend"
-                                        class="fa-solid fa-sort ml-1 text-red-500/50 group-hover:text-red-300"></i></th>
-                                <th class="px-4 py-3 font-semibold text-right text-blue-300 cursor-pointer hover:bg-slate-700/50 transition-colors group border-b border-gray-700"
-                                    onclick="sortTable('bid')">推奨入札額 <i id="sortIcon-bid"
-                                        class="fa-solid fa-sort ml-1 text-blue-500/50 group-hover:text-blue-300"></i>
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody id="detailsTableBody" class="divide-y divide-gray-700/50 bg-slate-900/50">
-                            <!-- JSによってデータが挿入されます -->
-                        </tbody>
-                    </table>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10">
+                    <!-- テーマ設定 -->
+                    <div class="glass-panel p-6 flex flex-col border border-white/10">
+                        <h2 class="text-xl font-semibold mb-6 flex items-center gap-3"><i
+                                class="fa-solid fa-palette text-blue-400"></i> デザインテーマ（レイアウト）</h2>
+                        <div class="space-y-4 font-medium text-gray-300 flex-grow">
+                            <!-- ダークモード -->
+                            <label id="label-theme-dark"
+                                class="flex items-center gap-4 p-5 rounded-xl border border-blue-500/30 bg-blue-500/10 cursor-pointer transition-colors shadow-sm theme-label group">
+                                <input type="radio" name="theme" value="dark" checked onchange="setTheme('dark')"
+                                    class="w-5 h-5 text-blue-500 bg-gray-700 border-gray-600 focus:ring-blue-500 focus:ring-2">
+                                <div>
+                                    <div
+                                        class="text-white text-lg font-bold tracking-wide transition-colors group-hover:text-blue-400">
+                                        ダークモード <span id="badge-theme-dark"
+                                            class="text-xs font-normal text-blue-300 ml-2 border border-blue-500/50 bg-blue-900/50 px-2 py-0.5 rounded">選択中</span>
+                                    </div>
+                                    <div class="text-sm text-gray-400 font-normal mt-1">目に優しい暗色ベースのテーマ (デフォルト)</div>
+                                </div>
+                            </label>
+                            <!-- ライトモード -->
+                            <label id="label-theme-light"
+                                class="flex items-center gap-4 p-5 rounded-xl border border-white/10 cursor-pointer transition-colors opacity-90 hover:opacity-100 theme-label group">
+                                <input type="radio" name="theme" value="light" onchange="setTheme('light')"
+                                    class="w-5 h-5 text-blue-500 bg-gray-700 border-gray-600 focus:ring-blue-500 focus:ring-2">
+                                <div>
+                                    <div
+                                        class="text-gray-300 text-lg font-bold tracking-wide transition-colors group-hover:text-blue-400">
+                                        ライトモード <span id="badge-theme-light"
+                                            class="text-xs font-normal text-blue-300 ml-2 border border-blue-500/50 bg-blue-900/50 px-2 py-0.5 rounded hidden">選択中</span>
+                                    </div>
+                                    <div class="text-sm text-gray-400 font-normal mt-1">明るい背景ベースのテーマ</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- その他の設定 -->
+                    <div class="glass-panel p-6 flex flex-col border border-white/10">
+                        <h2 class="text-xl font-semibold mb-6 flex items-center gap-3"><i
+                                class="fa-solid fa-sliders text-green-400"></i> パラメータのデフォルト値</h2>
+                        <div
+                            class="flex-grow flex flex-col items-center justify-center p-8 border-2 border-dashed border-white/20 rounded-xl bg-slate-800/30">
+                            <i class="fa-solid fa-screwdriver-wrench text-4xl text-gray-600 mb-4"></i>
+                            <span class="text-gray-400 font-medium">各種調整機能は、現在開発中です</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-        </div>
+        </main>
     </div>
 
     <!-- コピートースト通知 -->
@@ -513,6 +825,13 @@
                 checkPassword(true);
             }
 
+            // テーマ初期化
+            const savedTheme = localStorage.getItem('amazonTheme');
+            if (savedTheme === 'light') {
+                document.querySelector('input[name="theme"][value="light"]').checked = true;
+                setTheme('light');
+            }
+
             const fileInput = document.getElementById('fileInput');
             const dropZone = document.getElementById('dropZone');
 
@@ -537,6 +856,7 @@
 
             syncSliderAndInput('minClicksSlider', 'minClicks', 'minClicksVal', '回');
             syncSliderAndInput('targetAcosSlider', 'targetAcos', 'targetAcosVal', '%', true);
+            syncSliderAndInput('exclusionAcosSlider', 'exclusionAcos', 'exclusionAcosVal', '%', true);
             syncSliderAndInput('bidFactorSlider', 'bidFactor', 'bidFactorVal', '倍', true);
 
             // ===============================================
@@ -708,6 +1028,7 @@
 
             const minClicks = parseFloat(document.getElementById('minClicks').value) || 10;
             const targetAcos = parseFloat(document.getElementById('targetAcos').value) || 20;
+            const exclusionAcos = parseFloat(document.getElementById('exclusionAcos').value) || 50;
             const bidFactor = parseFloat(document.getElementById('bidFactor').value) || 1.2;
 
             const exAsins = [];
@@ -747,9 +1068,9 @@
                     wastedSpend = spend; // 購入0なので全額無駄
                     totalWastedSpend += spend;
                     totalWastedClicks += clicks;
-                } else if (orders > 0 && acos > targetAcos) {
+                } else if (orders > 0 && acos > exclusionAcos) {
                     resultType = isAsin ? "除外ASIN" : "除外キーワード";
-                    reason = `ACOSが${acos.toFixed(1)}% (目標${targetAcos.toFixed(1)}%を超過)`;
+                    reason = `ACOSが${acos.toFixed(1)}% (除外基準${exclusionAcos.toFixed(1)}%を超過)`;
                     wastedSpend = spend;
                     totalWastedSpend += spend;
                     totalWastedClicks += clicks;
@@ -1068,6 +1389,102 @@
                 el.classList.add('bg-red-500/20', 'text-red-400');
             } else {
                 el.classList.add('bg-green-500/20', 'text-green-400');
+            }
+        }
+
+        // === サイドバー開閉ロジック ===
+        let isSidebarCollapsed = false;
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const toggleBtn = document.getElementById('sidebarToggleBtn');
+            const titleFull = document.getElementById('sidebarTitle');
+            const titleShort = document.getElementById('sidebarTitleShort');
+            const navTexts = document.querySelectorAll('.nav-text');
+            const tooltips = document.querySelectorAll('.nav-tooltip');
+
+            isSidebarCollapsed = !isSidebarCollapsed;
+
+            if (isSidebarCollapsed) {
+                sidebar.classList.remove('w-64');
+                sidebar.classList.add('w-20');
+                toggleBtn.style.transform = 'rotate(180deg)';
+                titleFull.classList.add('hidden');
+                titleShort.classList.remove('hidden');
+                navTexts.forEach(el => el.classList.add('hidden'));
+                tooltips.forEach(el => el.classList.replace('hidden', 'group-hover:block'));
+            } else {
+                sidebar.classList.remove('w-20');
+                sidebar.classList.add('w-64');
+                toggleBtn.style.transform = 'rotate(0deg)';
+                titleFull.classList.remove('hidden');
+                titleShort.classList.add('hidden');
+                navTexts.forEach(el => el.classList.remove('hidden'));
+                tooltips.forEach(el => el.classList.replace('group-hover:block', 'hidden'));
+            }
+        }
+
+        // === ページ切り替え用ロジック ===
+        function switchPage(pageId) {
+            // 全ページコンテンツを非表示
+            document.querySelectorAll('.page-content').forEach(el => {
+                el.classList.add('hidden');
+                el.classList.remove('block');
+            });
+
+            // 選択されたページを表示
+            const targetPage = document.getElementById('page-' + pageId);
+            if (targetPage) {
+                targetPage.classList.remove('hidden');
+                targetPage.classList.add('block');
+            }
+
+            // サイドバーのナビゲーションスタイル更新
+            const navIds = ['sp', 'sb', 'settings'];
+            navIds.forEach(id => {
+                const navEl = document.getElementById('nav-' + id);
+                if (!navEl) return;
+
+                if (id === pageId) {
+                    navEl.classList.add('bg-blue-500/20', 'text-blue-400', 'border-blue-500/30', 'shadow-[0_0_15px_rgba(59,130,246,0.2)]');
+                    navEl.classList.remove('hover:bg-white/5', 'text-gray-400', 'border-transparent', 'hover:text-white');
+                } else {
+                    navEl.classList.remove('bg-blue-500/20', 'text-blue-400', 'border-blue-500/30', 'shadow-[0_0_15px_rgba(59,130,246,0.2)]');
+                    navEl.classList.add('hover:bg-white/5', 'text-gray-400', 'border-transparent', 'hover:text-white');
+                }
+            });
+        }
+
+        // === テーマ（レイアウト）切り替えロジック ===
+        function setTheme(mode) {
+            const hDark = document.getElementById('label-theme-dark');
+            const hLight = document.getElementById('label-theme-light');
+            const badgeDark = document.getElementById('badge-theme-dark');
+            const badgeLight = document.getElementById('badge-theme-light');
+
+            if (mode === 'light') {
+                document.body.classList.add('light-mode');
+
+                hLight.classList.add('border-blue-500/30', 'bg-blue-500/10', 'shadow-sm');
+                hLight.classList.remove('border-white/10');
+                badgeLight.classList.remove('hidden');
+
+                hDark.classList.remove('border-blue-500/30', 'bg-blue-500/10', 'shadow-sm');
+                hDark.classList.add('border-white/10');
+                badgeDark.classList.add('hidden');
+
+                localStorage.setItem('amazonTheme', 'light');
+            } else {
+                document.body.classList.remove('light-mode');
+
+                hDark.classList.add('border-blue-500/30', 'bg-blue-500/10', 'shadow-sm');
+                hDark.classList.remove('border-white/10');
+                badgeDark.classList.remove('hidden');
+
+                hLight.classList.remove('border-blue-500/30', 'bg-blue-500/10', 'shadow-sm');
+                hLight.classList.add('border-white/10');
+                badgeLight.classList.add('hidden');
+
+                localStorage.setItem('amazonTheme', 'dark');
             }
         }
     </script>

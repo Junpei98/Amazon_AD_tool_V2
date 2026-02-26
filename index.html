@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amazon広告 検索用語レポート レビュー＆統合最適化ツール</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            color: #f8fafc;
+            min-height: 100vh;
+        }
+
+        /* グラスモーフィズム（ガラス風UI） */
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+            border-radius: 1rem;
+        }
+
+        .input-glass {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .input-glass:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+        }
+
+        /* グラデーションテキスト */
+        .text-gradient {
+            background: linear-gradient(to right, #60a5fa, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .text-gradient-gold {
+            background: linear-gradient(to right, #fbbf24, #f59e0b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* スクロールバーのカスタマイズ */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(96, 165, 250, 0.5);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(96, 165, 250, 0.8);
+        }
+
+        /* テーブルのホバーアニメーション */
+        tbody tr {
+            transition: all 0.2s ease;
+        }
+
+        tbody tr:hover {
+            background-color: rgba(59, 130, 246, 0.1) !important;
+            transform: translateY(-1px);
+        }
+
+        /* ドラッグ＆ドロップゾーン */
+        .drop-zone {
+            transition: all 0.3s ease;
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+        }
+
+        .drop-zone.dragover {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: #3b82f6;
+        }
+
+        /* アニメーション関連 */
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-5px);
+            }
+
+            50% {
+                transform: translateX(5px);
+            }
+
+            75% {
+                transform: translateX(-5px);
+            }
+        }
+
+        .shake-animation {
+            animation: shake 0.4s ease-in-out;
+        }
+
+        @keyframes pulse-glow {
+
+            0%,
+            100% {
+                box-shadow: 0 0 15px rgba(251, 191, 36, 0.2);
+            }
+
+            50% {
+                box-shadow: 0 0 30px rgba(251, 191, 36, 0.6);
+                transform: scale(1.02);
+            }
+        }
+
+        .game-impact-panel {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.95) 100%);
+            border: 2px solid rgba(251, 191, 36, 0.3);
+            border-radius: 1rem;
+            position: relative;
+            overflow: hidden;
+            animation: pulse-glow 3s infinite;
+        }
+
+        .game-impact-panel::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(251, 191, 36, 0.1) 0%, transparent 70%);
+            animation: rotate 10s linear infinite;
+        }
+
+        @keyframes rotate {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes countUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .number-animate {
+            display: inline-block;
+            animation: countUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #f00;
+            opacity: 0;
+        }
+    </style>
+</head>
+
+<body class="p-6 relative">
+
+    <!-- 簡易セキュリティ（パスワードロック画面） -->
+    <div id="loginScreen"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-[#0f172a] bg-opacity-95 backdrop-blur-md">
+        <form id="loginBox"
+            class="glass-panel p-8 text-center max-w-sm w-full mx-4 border-t-4 border-t-blue-500 shadow-2xl"
+            onsubmit="event.preventDefault(); checkPassword();">
+            <div class="w-16 h-16 rounded-full bg-blue-500/20 flex items-center justify-center mx-auto mb-6">
+                <i class="fa-solid fa-lock text-3xl text-blue-400"></i>
+            </div>
+            <h2 class="text-2xl font-bold mb-2">システムロック</h2>
+            <p class="text-sm text-gray-400 mb-6">アクセスするにはパスワードを入力してください</p>
+
+            <!-- パスワードマネージャーにログインフォームだと認識させるためのダミーユーザー名 -->
+            <input type="text" id="usernameInput" name="username" value="admin" autocomplete="username" class="hidden"
+                aria-hidden="true">
+            <!-- autocomplete="current-password" を付与して保存を促す -->
+            <input type="password" id="passwordInput" name="password" autocomplete="current-password"
+                placeholder="パスワード"
+                class="input-glass w-full px-4 py-3 rounded-lg mb-4 text-center text-lg tracking-widest">
+
+            <button type="submit"
+                class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold py-3 px-4 rounded-lg transition-all transform hover:scale-105 shadow-lg flex justify-center items-center gap-2">
+                <i class="fa-solid fa-unlock"></i> ロック解除
+            </button>
+            <p id="loginError" class="text-red-400 text-sm mt-4 hidden"><i
+                    class="fa-solid fa-circle-exclamation mr-1"></i>パスワードが違います</p>
+        </form>
+    </div>
+
+    <!-- メインコンテンツ (初期非表示) -->
+    <div id="appMain" class="max-w-7xl mx-auto space-y-8 hidden opacity-0 transition-opacity duration-500">
+        <!-- ヘッダー -->
+        <div class="glass-panel p-8 text-center animate-fade-in relative z-10">
+            <h1 class="text-4xl font-bold mb-4 text-gradient">Amazon広告アナライザー</h1>
+            <p class="text-gray-300">検索用語レポート(CSV)を読み込み、除外・昇華キーワードと推奨入札額を自動抽出します。</p>
+        </div>
+
+        <!-- コントロールパネル ＆ アップロード -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 relative z-10">
+            <!-- 判定基準の設定 -->
+            <div class="glass-panel p-6 lg:col-span-1 border-t-4 border-t-blue-500 flex flex-col h-full">
+                <h2 class="text-lg font-semibold mb-4 flex items-center gap-2"><i
+                        class="fa-solid fa-sliders text-blue-400"></i>判定基準・パラメータ設定</h2>
+
+                <div class="space-y-6 flex-grow">
+                    <div>
+                        <div class="flex justify-between items-end mb-1">
+                            <label class="block text-sm text-gray-400" for="minClicks">除外判定のクリック数 (無購入時)</label>
+                            <span class="text-xs text-blue-400 font-mono" id="minClicksVal">10回</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <input type="range" id="minClicksSlider" min="1" max="50" value="10"
+                                class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-blue-500">
+                            <input type="number" id="minClicks" value="10" min="1"
+                                class="input-glass w-20 px-2 py-1.5 rounded-lg text-sm text-center">
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between items-end mb-1">
+                            <label class="block text-sm text-gray-400" for="targetAcos">目標 ACOS (%)</label>
+                            <span class="text-xs text-blue-400 font-mono" id="targetAcosVal">20.0%</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <input type="range" id="targetAcosSlider" min="1" max="100" step="0.5" value="20"
+                                class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-blue-500">
+                            <input type="number" id="targetAcos" value="20" min="1" step="0.1"
+                                class="input-glass w-20 px-2 py-1.5 rounded-lg text-sm text-center">
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between items-end mb-1">
+                            <label class="block text-sm text-gray-400" for="bidFactor">入札強化係数 (昇華キーワード用)</label>
+                            <span class="text-xs text-blue-400 font-mono" id="bidFactorVal">1.2倍</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <input type="range" id="bidFactorSlider" min="0.1" max="3.0" step="0.1" value="1.2"
+                                class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-blue-500">
+                            <input type="number" id="bidFactor" value="1.2" step="0.1" min="0.1"
+                                class="input-glass w-20 px-2 py-1.5 rounded-lg text-sm text-center">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 推奨入札額の算出ロジック明記 -->
+                <div class="mt-4 p-3 bg-slate-800/50 rounded-lg border border-slate-700">
+                    <h3 class="text-[11px] font-semibold text-gray-300 mb-1 flex items-center"><i
+                            class="fa-solid fa-calculator mr-1"></i>推奨入札額(Bid)の計算ロジック</h3>
+                    <ul class="text-[10px] text-gray-400 space-y-0.5 list-disc list-inside">
+                        <li>CVR = 購入数 ÷ クリック数</li>
+                        <li>客単価 = 売上 ÷ 購入数</li>
+                        <li>目標CPC = 客単価 × CVR × (目標ACOS ÷ 100)</li>
+                        <li>推奨入札額 = 目標CPC × 入札強化係数 <span class="text-gray-500">(※小数点切り捨て)</span></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- アップロードパネル -->
+            <div
+                class="glass-panel p-6 lg:col-span-2 border-t-4 border-t-purple-500 flex flex-col justify-center h-full">
+                <h2 class="text-xl font-semibold mb-4 flex items-center gap-2"><i
+                        class="fa-solid fa-file-csv text-purple-400"></i>データの読み込み</h2>
+                <div id="dropZone"
+                    class="drop-zone rounded-xl p-8 flex flex-col items-center justify-center cursor-pointer bg-slate-800/50 flex-grow">
+                    <i class="fa-solid fa-cloud-arrow-up text-5xl text-purple-400 mb-4"></i>
+                    <p class="text-lg mb-2 font-medium text-gray-200">ここにCSVファイルをドラッグ＆ドロップ</p>
+                    <p class="text-sm text-gray-400 mb-4">または、クリックしてファイルを選択</p>
+                    <input type="file" id="fileInput" accept=".csv" class="hidden">
+                    <button onclick="document.getElementById('fileInput').click()"
+                        class="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white px-6 py-2 rounded-full font-medium transition-all transform hover:scale-105 shadow-lg">ファイルを選択</button>
+                    <p id="fileNameDisplay" class="mt-4 text-sm text-green-400 font-medium hidden"></p>
+                </div>
+                <div id="statusMessage" class="mt-4 text-center hidden p-3 rounded-lg text-sm"></div>
+            </div>
+        </div>
+
+        <!-- 出力・結果セクション (非表示スタート) -->
+        <div id="resultsContainer" class="hidden space-y-8 animate-fade-in-up relative z-10">
+
+            <!-- ====== ゲーム感覚のインパクトパネル ====== -->
+            <div class="game-impact-panel p-8 mt-4 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-6"
+                id="impactBoard">
+                <div class="relative z-10 flex-1">
+                    <h2 class="text-xl font-bold text-gray-300 mb-2 flex items-center"><i
+                            class="fa-solid fa-fire text-orange-500 mr-2 text-2xl"></i>MISSION CLEARED</h2>
+                    <p class="text-sm text-gray-400">今回の最適化で、あなたが<span
+                            class="text-white font-semibold">削減した</span>無駄な広告費の合計</p>
+                </div>
+
+                <div
+                    class="relative z-10 flex flex-col items-center justify-center bg-black/40 rounded-2xl p-6 border border-yellow-500/30 min-w-[300px] transform hover:scale-105 transition-transform cursor-default">
+                    <div class="text-sm text-yellow-500/80 font-bold tracking-widest mb-1 uppercase">Saved Advertising
+                        Cost</div>
+                    <div
+                        class="text-5xl md:text-6xl font-extrabold drop-shadow-lg tracking-tight flex items-baseline gap-1">
+                        <span class="text-2xl text-yellow-500">¥</span>
+                        <span id="savedCostDisplay" class="number-animate text-yellow-400"
+                            style="text-shadow: 0 0 15px rgba(250, 204, 21, 0.4);">0</span>
+                    </div>
+                </div>
+
+                <div class="relative z-10 flex-1 text-right flex flex-col items-end">
+                    <div
+                        class="bg-red-500/20 text-red-300 border border-red-500/50 px-3 py-1 rounded-full text-xs font-bold mb-2 flex items-center gap-1">
+                        <i class="fa-solid fa-skull-crossbones"></i> 駆逐した無駄クリック: <span id="wastedClicksCount">0</span>回
+                    </div>
+                    <p class="text-xs text-gray-400 max-w-[200px]">※除外対象となったKW/ASINで消費されていた「売上ゼロまたは目標大幅超過」の広告費累計</p>
+                </div>
+                <!-- 紙吹雪コンテナ -->
+                <div id="confettiContainer" class="absolute inset-0 pointer-events-none overflow-hidden rounded-xl">
+                </div>
+            </div>
+
+            <h2 class="text-2xl font-bold border-b border-gray-700 pb-2 mt-8"><i
+                    class="fa-solid fa-clipboard-list mr-2 text-indigo-400"></i>コピペ用出力リスト</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- 除外ASIN -->
+                <div class="glass-panel p-5 border-t-4 border-t-red-500 flex flex-col h-[350px]">
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="text-md font-bold text-red-400"><i class="fa-solid fa-store-slash mr-1"></i>除外ASIN
+                            <span id="countAsin"
+                                class="bg-red-500/20 text-red-300 text-xs px-2 py-0.5 rounded ml-1">0</span>
+                        </h3>
+                        <button onclick="copyToClipboard('outAsin')"
+                            class="text-gray-400 hover:text-white transition-colors" title="コピー"><i
+                                class="fa-regular fa-copy"></i></button>
+                    </div>
+                    <textarea id="outAsin" readonly
+                        class="input-glass w-full flex-grow p-3 rounded-lg resize-none text-xs font-mono"></textarea>
+                </div>
+
+                <!-- 除外キーワード -->
+                <div class="glass-panel p-5 border-t-4 border-t-orange-500 flex flex-col h-[350px]">
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="text-md font-bold text-orange-400"><i class="fa-solid fa-ban mr-1"></i>除外キーワード <span
+                                id="countKwEx"
+                                class="bg-orange-500/20 text-orange-300 text-xs px-2 py-0.5 rounded ml-1">0</span></h3>
+                        <button onclick="copyToClipboard('outKwEx')"
+                            class="text-gray-400 hover:text-white transition-colors" title="コピー"><i
+                                class="fa-regular fa-copy"></i></button>
+                    </div>
+                    <textarea id="outKwEx" readonly
+                        class="input-glass w-full flex-grow p-3 rounded-lg resize-none text-xs font-mono"></textarea>
+                </div>
+
+                <!-- 昇華キーワード (Bidつき) -->
+                <div class="glass-panel p-5 border-t-4 border-t-green-500 flex flex-col h-[350px]">
+                    <div class="flex justify-between items-center mb-3">
+                        <div class="group relative">
+                            <h3 class="text-md font-bold text-green-400 flex items-center cursor-help">
+                                <i class="fa-solid fa-arrow-trend-up mr-1"></i>昇華KW <span
+                                    class="text-[10px] text-gray-400 ml-1 font-normal">(語句, 入札額)</span>
+                                <span id="countKwUp"
+                                    class="bg-green-500/20 text-green-300 text-xs px-2 py-0.5 rounded ml-2">0</span>
+                            </h3>
+                        </div>
+                        <button onclick="copyToClipboard('outKwUp')"
+                            class="text-gray-400 hover:text-white transition-colors" title="コピー"><i
+                                class="fa-regular fa-copy"></i></button>
+                    </div>
+                    <textarea id="outKwUp" readonly
+                        class="input-glass w-full flex-grow p-3 rounded-lg resize-none text-xs font-mono"></textarea>
+                </div>
+
+            </div>
+
+            <!-- テーブル出力セクション -->
+            <div class="glass-panel p-6 border-t-4 border-t-blue-500 mt-8">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-bold"><i class="fa-solid fa-table-list mr-2 text-blue-400"></i>判定理由・詳細データ
+                    </h2>
+                    <div class="text-sm text-gray-400 flex items-center gap-4">
+                        <span class="px-2 py-1 bg-gray-800 rounded border border-gray-700">表示件数: <span id="tableCount"
+                                class="font-bold text-white">0</span>件</span>
+                        <span class="px-2 py-1 bg-red-900/40 rounded border border-red-800/50 text-red-300 hidden"
+                            id="tableWastedCostDisplay">除外対象の無駄消費: ¥0</span>
+                    </div>
+                </div>
+                <div class="overflow-x-auto rounded-lg border border-gray-700 max-h-[600px] overflow-y-auto">
+                    <table class="w-full text-left text-sm text-gray-300 whitespace-nowrap sticky-header">
+                        <thead class="bg-slate-800 text-gray-200 select-none sticky top-0 z-20 shadow-md">
+                            <tr>
+                                <th class="px-4 py-3 font-semibold cursor-pointer hover:bg-slate-700/50 transition-colors group border-b border-gray-700"
+                                    onclick="sortTable('term')">検索用語 / ASIN <i id="sortIcon-term"
+                                        class="fa-solid fa-sort ml-1 text-gray-500 group-hover:text-gray-300"></i></th>
+                                <th class="px-4 py-3 font-semibold cursor-pointer hover:bg-slate-700/50 transition-colors group border-b border-gray-700"
+                                    onclick="sortTable('type')">判定結果 <i id="sortIcon-type"
+                                        class="fa-solid fa-sort ml-1 text-gray-500 group-hover:text-gray-300"></i></th>
+                                <th class="px-4 py-3 font-semibold cursor-pointer hover:bg-slate-700/50 transition-colors group border-b border-gray-700"
+                                    onclick="sortTable('reason')">理由 <i id="sortIcon-reason"
+                                        class="fa-solid fa-sort ml-1 text-gray-500 group-hover:text-gray-300"></i></th>
+                                <th class="px-4 py-3 font-semibold text-right cursor-pointer hover:bg-slate-700/50 transition-colors group border-b border-gray-700"
+                                    onclick="sortTable('clicks')">クリック数 <i id="sortIcon-clicks"
+                                        class="fa-solid fa-sort ml-1 text-gray-500 group-hover:text-gray-300"></i></th>
+                                <th class="px-4 py-3 font-semibold text-right cursor-pointer hover:bg-slate-700/50 transition-colors group border-b border-gray-700"
+                                    onclick="sortTable('orders')">購入数 <i id="sortIcon-orders"
+                                        class="fa-solid fa-sort ml-1 text-gray-500 group-hover:text-gray-300"></i></th>
+                                <th class="px-4 py-3 font-semibold text-right cursor-pointer hover:bg-slate-700/50 transition-colors group border-b border-gray-700"
+                                    onclick="sortTable('acos')">ACOS (%) <i id="sortIcon-acos"
+                                        class="fa-solid fa-sort ml-1 text-gray-500 group-hover:text-gray-300"></i></th>
+                                <th class="px-4 py-3 font-semibold text-right text-red-400 cursor-pointer hover:bg-slate-700/50 transition-colors group border-b border-gray-700"
+                                    onclick="sortTable('spend')">無駄な広告費 <i id="sortIcon-spend"
+                                        class="fa-solid fa-sort ml-1 text-red-500/50 group-hover:text-red-300"></i></th>
+                                <th class="px-4 py-3 font-semibold text-right text-blue-300 cursor-pointer hover:bg-slate-700/50 transition-colors group border-b border-gray-700"
+                                    onclick="sortTable('bid')">推奨入札額 <i id="sortIcon-bid"
+                                        class="fa-solid fa-sort ml-1 text-blue-500/50 group-hover:text-blue-300"></i>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="detailsTableBody" class="divide-y divide-gray-700/50 bg-slate-900/50">
+                            <!-- JSによってデータが挿入されます -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- コピートースト通知 -->
+    <div id="toast"
+        class="fixed bottom-5 right-5 bg-blue-600 text-white px-6 py-3 rounded-lg shadow-xl transform transition-transform duration-300 translate-y-20 opacity-0 z-50 flex items-center gap-3">
+        <i class="fa-solid fa-circle-check"></i>
+        <span id="toastMsg">クリップボードにコピーしました！</span>
+    </div>
+
+    <script>
+        // === セキュリティ機能 ===
+        function checkPassword(skipSave = false) {
+            const pwd = document.getElementById('passwordInput').value;
+            const errorEl = document.getElementById('loginError');
+            const boxEl = document.getElementById('loginBox');
+
+            // auto-login check
+            if (skipSave) {
+                unlockApp();
+                return;
+            }
+
+            if (pwd === 'amazon2026') {
+                // パスワード正解
+                localStorage.setItem('amazonToolUnlocked', 'true');
+                unlockApp();
+            } else {
+                // パスワード不正解
+                errorEl.classList.remove('hidden');
+                boxEl.classList.remove('shake-animation');
+                // アニメーションを再トリガーするために一度リフローを強制
+                void boxEl.offsetWidth;
+                boxEl.classList.add('shake-animation');
+                document.getElementById('passwordInput').value = '';
+            }
+        }
+
+        function unlockApp() {
+            document.getElementById('loginScreen').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('loginScreen').classList.add('hidden');
+                const mainApp = document.getElementById('appMain');
+                mainApp.classList.remove('hidden');
+                // わずかな遅延を入れてフェードイン
+                setTimeout(() => {
+                    mainApp.classList.remove('opacity-0');
+                }, 50);
+            }, 300);
+        }
+
+        // === アプリケーションロジック ===
+        let parsedDataCache = null;
+        let currentDetails = [];
+        let currentSortColumn = '';
+        let isAscending = true;
+        let totalWastedSpend = 0; // 無駄な広告費の合計
+        let totalWastedClicks = 0; // 駆逐したクリック数
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // 自動ログイン機能のチェック
+            if (localStorage.getItem('amazonToolUnlocked') === 'true') {
+                checkPassword(true);
+            }
+
+            const fileInput = document.getElementById('fileInput');
+            const dropZone = document.getElementById('dropZone');
+
+            // ==== スライダーと数値入力の連動と再計算イベント ====
+
+            function syncSliderAndInput(sliderId, inputId, displayId, suffix, isFloat = false) {
+                const slider = document.getElementById(sliderId);
+                const input = document.getElementById(inputId);
+                const display = document.getElementById(displayId);
+
+                function updateValues(source, value) {
+                    let val = isFloat ? parseFloat(value).toFixed(1) : parseInt(value, 10);
+                    if (source !== 'slider') slider.value = val;
+                    if (source !== 'input') input.value = val;
+                    display.textContent = val + suffix;
+                    runAnalysis();
+                }
+
+                slider.addEventListener('input', (e) => updateValues('slider', e.target.value));
+                input.addEventListener('input', (e) => updateValues('input', e.target.value));
+            }
+
+            syncSliderAndInput('minClicksSlider', 'minClicks', 'minClicksVal', '回');
+            syncSliderAndInput('targetAcosSlider', 'targetAcos', 'targetAcosVal', '%', true);
+            syncSliderAndInput('bidFactorSlider', 'bidFactor', 'bidFactorVal', '倍', true);
+
+            // ===============================================
+
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files.length) handleFile(e.target.files[0]);
+            });
+
+            // ドラッグ＆ドロップ用イベント設定
+            dropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropZone.classList.add('dragover');
+            });
+            dropZone.addEventListener('dragleave', () => {
+                dropZone.classList.remove('dragover');
+            });
+            dropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('dragover');
+                if (e.dataTransfer.files.length) {
+                    handleFile(e.dataTransfer.files[0]);
+                }
+            });
+        });
+
+        // Amazon提供CSVの安全なパーサー
+        function parseCSV(text) {
+            const rows = [];
+            let currentRow = [];
+            let currentCell = '';
+            let inQuotes = false;
+
+            for (let i = 0; i < text.length; i++) {
+                const char = text[i];
+                if (inQuotes) {
+                    if (char === '"' && text[i + 1] === '"') {
+                        currentCell += '"';
+                        i++;
+                    } else if (char === '"') {
+                        inQuotes = false;
+                    } else {
+                        currentCell += char;
+                    }
+                } else {
+                    if (char === '"') {
+                        inQuotes = true;
+                    } else if (char === ',') {
+                        currentRow.push(currentCell.trim());
+                        currentCell = '';
+                    } else if (char === '\n' || char === '\r') {
+                        currentRow.push(currentCell.trim());
+                        currentCell = '';
+                        if (currentRow.join('').trim() !== '') {
+                            rows.push(currentRow);
+                        }
+                        currentRow = [];
+                        if (char === '\r' && text[i + 1] === '\n') {
+                            i++;
+                        }
+                    } else {
+                        currentCell += char;
+                    }
+                }
+            }
+            if (currentCell || text[text.length - 1] === ',') {
+                currentRow.push(currentCell.trim());
+            }
+            if (currentRow.length > 0 && currentRow.join('').trim() !== '') {
+                rows.push(currentRow);
+            }
+            return rows;
+        }
+
+        function handleFile(file) {
+            if (!file.name.endsWith('.csv')) {
+                showStatus("エラー：CSVファイルを選択してください。", "error");
+                return;
+            }
+
+            const fileNameDisplay = document.getElementById('fileNameDisplay');
+            fileNameDisplay.textContent = `選択中: ${file.name}`;
+            fileNameDisplay.classList.remove('hidden');
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const text = e.target.result;
+                const rows = parseCSV(text);
+
+                if (rows.length < 2) {
+                    showStatus("データが見つからない、またはフォーマットが不正です。", "error");
+                    return;
+                }
+
+                parsedDataCache = rows;
+                showStatus("ファイルの読み込みに成功しました！解析を実行します。", "success");
+                runAnalysis();
+            };
+            reader.onerror = () => {
+                showStatus("ファイルの読み込み中にエラーが発生しました。", "error");
+            };
+            // 汎用的に対処するためShfit_JISで読み込み
+            reader.readAsText(file, 'Shift_JIS');
+        }
+
+        // カラム検索：前方一致や部分一致で柔軟に探す
+        function findColumnIndex(header, keywords) {
+            const lowerHeader = header.map(h => h.toLowerCase().replace(/['""]/g, ''));
+            for (let i = 0; i < lowerHeader.length; i++) {
+                for (let kw of keywords) {
+                    if (lowerHeader[i].includes(kw.toLowerCase())) return i;
+                }
+            }
+            return -1;
+        }
+
+        function parseNumber(val) {
+            if (!val) return 0;
+            const parsed = parseFloat(String(val).replace(/,/g, ''));
+            return isNaN(parsed) ? 0 : parsed;
+        }
+
+        function parseAcos(val) {
+            if (!val) return 0;
+            let s = String(val).trim().replace(/,/g, '');
+            if (s === '') return 0;
+            if (s.includes('%')) {
+                return parseFloat(s.replace('%', ''));
+            }
+            let n = parseFloat(s);
+            if (isNaN(n)) return 0;
+            if (n <= 1 && s.includes('.')) {
+                return n * 100;
+            }
+            return n;
+        }
+
+        // 解析・入札額計算・仕分け・無駄広告費計算メインロジック
+        function runAnalysis() {
+            if (!parsedDataCache || parsedDataCache.length < 2) return;
+
+            const header = parsedDataCache[0];
+            const dataRows = parsedDataCache.slice(1);
+
+            const idxTerm = findColumnIndex(header, ['検索用語', 'Customer Search Term', 'Search Term']);
+            const idxClicks = findColumnIndex(header, ['クリック数', 'Clicks']);
+            const idxOrders = findColumnIndex(header, ['7日間の合計注文数', '注文数', '購入数', '7 Day Total Orders', 'Orders']);
+            const idxAcos = findColumnIndex(header, ['売上高に対する広告費の割合', 'ACOS', 'Total Advertising Cost of Sales']);
+            const idxSales = findColumnIndex(header, ['7日間の総売上', '売上', 'Sales', '7 Day Total Sales']);
+            // 広告費(Spend)カラムの特定（追加）
+            const idxSpendMatched = findColumnIndex(header, ['利用金額', '広告費', 'Spend', '費用']); // 利用金額（Spend）という名称に対応
+
+            // 強制的に Spend 列だと推定してインデックスを探す（よくあるパターン）
+            let idxSpend = idxSpendMatched;
+            if (idxSpend === -1) {
+                // If not found by keyword, look for exact match combinations known in Amazon reports
+                for (let i = 0; i < header.length; i++) {
+                    const hText = header[i].replace(/['""]/g, '').trim();
+                    if (hText === 'Spend' || hText.endsWith('利用金額') || hText.endsWith('広告費')) {
+                        idxSpend = i;
+                        break;
+                    }
+                }
+            }
+
+            if (idxTerm === -1 || idxClicks === -1 || idxOrders === -1 || idxAcos === -1) {
+                showStatus("必須カラム(検索用語、クリック数、注文数、ACOS)が見つかりません。レポート形式を確認してください。", "error");
+                return;
+            }
+
+            const minClicks = parseFloat(document.getElementById('minClicks').value) || 10;
+            const targetAcos = parseFloat(document.getElementById('targetAcos').value) || 20;
+            const bidFactor = parseFloat(document.getElementById('bidFactor').value) || 1.2;
+
+            const exAsins = [];
+            const exKws = [];
+            const upKws = [];
+            const details = [];
+
+            // リセット
+            totalWastedSpend = 0;
+            totalWastedClicks = 0;
+
+            dataRows.forEach((row) => {
+                if (row.length <= Math.max(idxTerm, idxClicks, idxOrders, idxAcos)) return;
+
+                const term = row[idxTerm];
+                if (!term || term === '') return;
+
+                const clicks = parseNumber(row[idxClicks]);
+                const orders = parseNumber(row[idxOrders]);
+                const acos = parseAcos(row[idxAcos]);
+                const sales = idxSales !== -1 ? parseNumber(row[idxSales]) : 0;
+
+                // 広告費カラムが見つかった場合はその数値を、無い場合は「売上÷購入数」等の逆算ではなく0とする
+                const spend = idxSpend !== -1 && row[idxSpend] ? parseNumber(row[idxSpend]) : 0;
+
+                // 10桁の英数字 (B0から始まるASIN)
+                const isAsin = /^[bB]0[a-zA-Z0-9]{8}$/.test(term.trim());
+                let resultType = null;
+                let reason = "";
+                let calculatedBid = "-";
+                let wastedSpend = 0; // この行で無駄に消費した広告費
+
+                // == ロジック： 悪化基準（クリック数多い＆購入0、または ACOSが目標超過） ==
+                if (orders === 0 && clicks >= minClicks) {
+                    resultType = isAsin ? "除外ASIN" : "除外キーワード";
+                    reason = `購入0でクリックが${clicks}回発生 (基準: ${minClicks}回以上)`;
+                    wastedSpend = spend; // 購入0なので全額無駄
+                    totalWastedSpend += spend;
+                    totalWastedClicks += clicks;
+                } else if (orders > 0 && acos > targetAcos) {
+                    resultType = isAsin ? "除外ASIN" : "除外キーワード";
+                    reason = `ACOSが${acos.toFixed(1)}% (目標${targetAcos.toFixed(1)}%を超過)`;
+                    wastedSpend = spend;
+                    totalWastedSpend += spend;
+                    totalWastedClicks += clicks;
+                }
+
+                // == ロジック： 昇華基準（購入1以上かつ目標ACOS以下） ==
+                if (!resultType && orders >= 1 && acos <= targetAcos) {
+                    resultType = "昇華";
+                    reason = `購入${orders}件, ACOS ${acos.toFixed(1)}% (高パフォーマンス)`;
+
+                    if (clicks > 0 && sales > 0) {
+                        const cvr = orders / clicks;
+                        const avgOrderValue = sales / orders;
+                        const targetCpc = avgOrderValue * cvr * (targetAcos / 100);
+                        const rawBid = targetCpc * bidFactor;
+                        // Math.floor に変更（小数点以下切り捨てにして整数化）
+                        calculatedBid = Math.floor(rawBid);
+                    }
+                }
+
+                if (resultType) {
+                    if (resultType === "除外ASIN") {
+                        exAsins.push(term);
+                    } else if (resultType === "除外キーワード") {
+                        exKws.push(term);
+                    } else if (resultType === "昇華") {
+                        const bidOutput = calculatedBid !== "-" ? calculatedBid : '';
+                        upKws.push(`${term}, ${bidOutput}`);
+                    }
+
+                    details.push({
+                        term: term,
+                        type: resultType,
+                        reason: reason,
+                        clicks: clicks,
+                        orders: orders,
+                        acos: acos,
+                        spend: wastedSpend, // テーブル表示用に保持
+                        bid: calculatedBid
+                    });
+                }
+            });
+
+            currentDetails = details;
+
+            // 算出された合計金額が0のままなら、ユーザーに警告（カラム名不一致の可能性）
+            if (totalWastedSpend === 0 && details.some(d => d.type.includes('除外'))) {
+                showStatus("注意: 「利用金額/広告費」のカラムが見つからなかったため削減額が計算できません", "error");
+            }
+
+            // 既存のソート状態があれば再適用
+            if (currentSortColumn) {
+                sortDataArray(currentSortColumn, isAscending);
+            }
+
+            renderResults(exAsins, exKws, upKws);
+            renderTable();
+            updateSortIcons();
+
+            // ゲーム演出のトリガー
+            animateGameImpactPanel();
+        }
+
+        // ==========================================
+        // UI レンダリング (結果とエンタメ表現)
+        // ==========================================
+        function animateValue(obj, start, end, duration) {
+            // もしendが0やNaNなら即時0にして終了
+            if (!end || end <= 0) {
+                obj.innerHTML = "0";
+                return;
+            }
+
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                // イージングアウト (徐々に遅くなる)
+                const easeOutQuad = progress * (2 - progress);
+                // Math.floor に変更（金額は切り捨ての整数）
+                const currentVal = Math.floor(easeOutQuad * (end - start) + start);
+
+                // 3桁カンマ区切りで表示
+                obj.innerHTML = currentVal.toLocaleString();
+
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                } else {
+                    // 最終値を念のため確実にセット（切り捨て整数）
+                    obj.innerHTML = Math.floor(end).toLocaleString();
+                    // アニメーション完了時に一瞬光らせる
+                    obj.classList.add('scale-110', 'text-yellow-400');
+                    setTimeout(() => {
+                        obj.classList.remove('scale-110', 'text-yellow-400');
+                        obj.style.transition = 'all 0.3s ease';
+                    }, 200);
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        // 紙吹雪を降らせるパーティクルエフェクト
+        function launchConfetti(durationMultiplier = 1) {
+            const container = document.getElementById('confettiContainer');
+            container.innerHTML = '';
+
+            const colors = ['#fbbf24', '#f59e0b', '#3b82f6', '#10b981', '#ef4444', '#fff'];
+
+            // 削減額に応じて紙吹雪の量を変動 (Max 150)
+            let count = Math.min(150, Math.max(30, Math.floor(totalWastedSpend / 1000)));
+            if (totalWastedSpend <= 0) count = 0;
+
+            for (let i = 0; i < count; i++) {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+
+                // ランダムプロパティ
+                const startX = Math.random() * 100;
+                const endY = 100 + Math.random() * 20; // 画面外まで
+                // x方向への揺らぎ
+                const transformEndX = (Math.random() - 0.5) * 50;
+
+                const bgColor = colors[Math.floor(Math.random() * colors.length)];
+                const animDuration = 1.5 + Math.random() * 2 * durationMultiplier;
+                const delay = Math.random() * 0.5;
+
+                confetti.style.left = `${startX}%`;
+                confetti.style.top = `-10%`;
+                confetti.style.backgroundColor = bgColor;
+
+                // キーフレームアニメーションを動的に付与
+                confetti.animate([
+                    { transform: `translate3d(0,0,0) rotate(0deg)`, opacity: 1 },
+                    { transform: `translate3d(${transformEndX}vw, ${endY}vh, 0) rotate(${360 * Math.random() + 360}deg)`, opacity: 0 }
+                ], {
+                    duration: animDuration * 1000,
+                    delay: delay * 1000,
+                    easing: 'cubic-bezier(.37,0,.63,1)',
+                    fill: 'forwards'
+                });
+
+                container.appendChild(confetti);
+            }
+        }
+
+        function animateGameImpactPanel() {
+            // パネルを表示
+            const panel = document.getElementById('impactBoard');
+            panel.classList.remove('hidden');
+
+            // 数字のアニメーション
+            const displayEl = document.getElementById('savedCostDisplay');
+            // 値が変わるときだけアニメーションを再実行するために、クラスをトグルするハック
+            displayEl.classList.remove('number-animate');
+            void displayEl.offsetWidth; // リフロー強制
+            displayEl.classList.add('number-animate');
+
+            // 0から最終金額までカウントアップ (2秒間)
+            animateValue(displayEl, 0, totalWastedSpend, 2000);
+
+            document.getElementById('wastedClicksCount').textContent = totalWastedClicks.toLocaleString();
+
+            // テーブル上部のサマリーも更新（切り捨て整数）
+            const tableSummary = document.getElementById('tableWastedCostDisplay');
+            tableSummary.textContent = `除外対象の無駄消費: ¥${Math.floor(totalWastedSpend).toLocaleString()}`;
+            tableSummary.classList.remove('hidden');
+
+            // 紙吹雪エフェクト (2秒後にドンッ)
+            setTimeout(() => {
+                if (totalWastedSpend > 0) launchConfetti(1.2);
+            }, 1800);
+        }
+
+        function renderResults(exAsins, exKws, upKws) {
+            document.getElementById('resultsContainer').classList.remove('hidden');
+
+            document.getElementById('outAsin').value = exAsins.join('\n');
+            document.getElementById('countAsin').textContent = exAsins.length;
+
+            document.getElementById('outKwEx').value = exKws.join('\n');
+            document.getElementById('countKwEx').textContent = exKws.length;
+
+            document.getElementById('outKwUp').value = upKws.join('\n');
+            document.getElementById('countKwUp').textContent = upKws.length;
+        }
+
+        function renderTable() {
+            const tableBody = document.getElementById('detailsTableBody');
+            tableBody.innerHTML = '';
+            document.getElementById('tableCount').textContent = currentDetails.length;
+
+            currentDetails.forEach(item => {
+                const tr = document.createElement('tr');
+                let typeBadge = '';
+                if (item.type === '除外ASIN') typeBadge = '<span class="px-2 py-1 rounded bg-red-500/20 text-red-400 text-[11px] font-semibold border border-red-500/30">除外ASIN</span>';
+                else if (item.type === '除外キーワード') typeBadge = '<span class="px-2 py-1 rounded bg-orange-500/20 text-orange-400 text-[11px] font-semibold border border-orange-500/30">除外キーワード</span>';
+                else if (item.type === '昇華') typeBadge = '<span class="px-2 py-1 rounded bg-green-500/20 text-green-400 text-[11px] font-semibold border border-green-500/30">昇華</span>';
+
+                // 計算された入札額がある場合は青で強調
+                const bidHtml = item.bid !== "-"
+                    ? `<span class="bg-blue-500/20 text-blue-300 px-2 py-0.5 rounded font-mono border border-blue-500/30">¥${item.bid.toLocaleString()}</span>`
+                    : `<span class="text-gray-600">-</span>`;
+
+                // 無駄な広告費がある場合（除外）は赤字で表示、昇華の場合は「-」
+                // Math.floor で小数点以下切り捨て処理
+                const spendHtml = (item.type.includes('除外') && item.spend > 0)
+                    ? `<span class="text-red-400 font-bold">¥${Math.floor(item.spend).toLocaleString()}</span>`
+                    : '<span class="text-gray-600">-</span>';
+
+                tr.innerHTML = `
+                    <td class="px-4 py-3 font-mono text-gray-200">${item.term}</td>
+                    <td class="px-4 py-3">${typeBadge}</td>
+                    <td class="px-4 py-3 text-gray-400 text-[11px] whitespace-normal max-w-[200px]">${item.reason}</td>
+                    <td class="px-4 py-3 text-right text-gray-300">${item.clicks.toLocaleString()}</td>
+                    <td class="px-4 py-3 text-right text-gray-300">${item.orders.toLocaleString()}</td>
+                    <td class="px-4 py-3 text-right font-medium text-gray-300">${item.acos.toFixed(1)}%</td>
+                    <td class="px-4 py-3 text-right">${spendHtml}</td>
+                    <td class="px-4 py-3 text-right font-bold">${bidHtml}</td>
+                `;
+                tableBody.appendChild(tr);
+            });
+        }
+
+        // === ソート機能 ===
+        function sortTable(column) {
+            if (currentSortColumn === column) {
+                isAscending = !isAscending;
+            } else {
+                currentSortColumn = column;
+                // 広告費、クリック数など基本数値は「降順(大きい順)」から始めた方が直感的
+                if (['bid', 'spend', 'clicks', 'acos', 'orders'].includes(column)) {
+                    isAscending = false;
+                } else {
+                    isAscending = true;
+                }
+            }
+
+            sortDataArray(column, isAscending);
+            renderTable();
+            updateSortIcons();
+        }
+
+        function sortDataArray(column, asc) {
+            currentDetails.sort((a, b) => {
+                let valA = a[column];
+                let valB = b[column];
+
+                // 入札額("-")と無駄広告費("-")を数値の最下部に扱う処理
+                if (column === 'bid' || column === 'spend') {
+                    // 降順(大きい順)のとき、ハイフンは一番下にしたいので無限小にする
+                    const emptyVal = asc ? 9999999 : -9999999;
+
+                    if (column === 'bid') {
+                        valA = valA === '-' ? emptyVal : parseFloat(valA);
+                        valB = valB === '-' ? emptyVal : parseFloat(valB);
+                    }
+                    if (column === 'spend') {
+                        // 昇華(除外じゃない)場合はspendの値を入れていないので0扱いかハイフン扱い
+                        valA = (a.type.includes('除外')) ? parseFloat(valA) : emptyVal;
+                        valB = (b.type.includes('除外')) ? parseFloat(valB) : emptyVal;
+                    }
+                }
+
+                if (typeof valA === 'string' && typeof valB === 'string') {
+                    return asc ? valA.localeCompare(valB, 'ja') : valB.localeCompare(valA, 'ja');
+                } else {
+                    if (valA < valB) return asc ? -1 : 1;
+                    if (valA > valB) return asc ? 1 : -1;
+                    return 0;
+                }
+            });
+        }
+
+        function updateSortIcons() {
+            const columns = ['term', 'type', 'reason', 'clicks', 'orders', 'acos', 'spend', 'bid'];
+            columns.forEach(col => {
+                const icon = document.getElementById(`sortIcon-${col}`);
+                if (!icon) return;
+
+                // 基本クラスをリセット
+                icon.className = 'ml-1 group-hover:text-gray-300 fa-solid transition-colors';
+
+                if (col !== currentSortColumn) {
+                    icon.classList.add('fa-sort');
+                    if (col === 'bid') icon.classList.add('text-blue-500/50');
+                    else if (col === 'spend') icon.classList.add('text-red-500/50');
+                    else icon.classList.add('text-gray-500');
+                } else {
+                    // ソート中のカラム
+                    icon.classList.add(isAscending ? 'fa-sort-up' : 'fa-sort-down');
+                    if (col === 'bid') icon.classList.add('text-blue-400');
+                    else if (col === 'spend') icon.classList.add('text-red-400');
+                    else icon.classList.add('text-white');
+                }
+            });
+        }
+
+        function copyToClipboard(elementId) {
+            const el = document.getElementById(elementId);
+            if (!el.value) return;
+
+            navigator.clipboard.writeText(el.value).then(() => {
+                const toast = document.getElementById('toast');
+                toast.classList.remove('opacity-0', 'translate-y-20');
+                setTimeout(() => {
+                    toast.classList.add('opacity-0', 'translate-y-20');
+                }, 2000);
+            });
+        }
+
+        function showStatus(msg, type) {
+            const el = document.getElementById('statusMessage');
+            el.textContent = msg;
+            el.classList.remove('hidden', 'bg-red-500/20', 'text-red-400', 'bg-green-500/20', 'text-green-400');
+            if (type === 'error') {
+                el.classList.add('bg-red-500/20', 'text-red-400');
+            } else {
+                el.classList.add('bg-green-500/20', 'text-green-400');
+            }
+        }
+    </script>
+</body>
+
+</html>

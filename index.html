@@ -477,13 +477,13 @@
                                             <label class="block text-sm text-gray-300 font-medium"
                                                 for="bidFactor">入札強化係数
                                                 (昇華キーワード用)</label>
-                                            <span class="text-xs text-blue-400 font-mono" id="bidFactorVal">1.2倍</span>
+                                            <span class="text-xs text-blue-400 font-mono" id="bidFactorVal">1.4倍</span>
                                         </div>
                                         <div class="flex items-center gap-3">
                                             <input type="range" id="bidFactorSlider" min="0.1" max="3.0" step="0.1"
-                                                value="1.2"
+                                                value="1.4"
                                                 class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-blue-500">
-                                            <input type="number" id="bidFactor" value="1.2" step="0.1" min="0.1"
+                                            <input type="number" id="bidFactor" value="1.4" step="0.1" min="0.1"
                                                 class="input-glass w-20 px-2 py-1.5 rounded-lg text-sm text-center">
                                         </div>
                                     </div>
@@ -501,6 +501,12 @@
                                 <li>目標CPC = 客単価 × CVR × (目標ACOS ÷ 100)</li>
                                 <li>推奨入札額 = 目標CPC × 入札強化係数 <span class="text-gray-500">(※小数点切り捨て)</span></li>
                             </ul>
+                            <div class="mt-2 p-2 bg-blue-900/30 rounded border border-blue-500/20">
+                                <p class="text-[10px] text-blue-300 flex items-start gap-1">
+                                    <i class="fa-solid fa-shield-halved mt-0.5"></i>
+                                    <span><strong>SOP準拠:</strong> 昇華条件は「購入2件以上 ＋ ACOS≤目標」の両方を満たすKWのみ。入札強化係数は最上部インプレッション奪取のため<strong>デフォルト1.4倍（CPC +40%）</strong>に設定。</span>
+                                </p>
+                            </div>
                         </div>
                     </div>
 
@@ -567,7 +573,7 @@
                     <h2 class="text-2xl font-bold border-b border-gray-700 pb-2 mt-8"><i
                             class="fa-solid fa-clipboard-list mr-2 text-indigo-400"></i>コピペ用出力リスト</h2>
 
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- 除外ASIN -->
                         <div class="glass-panel p-5 border-t-4 border-t-red-500 flex flex-col h-[350px]">
                             <div class="flex justify-between items-center mb-3">
@@ -599,22 +605,42 @@
                                 class="input-glass w-full flex-grow p-3 rounded-lg resize-none text-xs font-mono"></textarea>
                         </div>
 
-                        <!-- 昇華キーワード (Bidつき) -->
+                        <!-- 【マニュアル追加用】昇華キーワード (Bidつき) -->
                         <div class="glass-panel p-5 border-t-4 border-t-green-500 flex flex-col h-[350px]">
                             <div class="flex justify-between items-center mb-3">
                                 <div class="group relative">
                                     <h3 class="text-md font-bold text-green-400 flex items-center cursor-help">
-                                        <i class="fa-solid fa-arrow-trend-up mr-1"></i>昇華KW <span
+                                        <i class="fa-solid fa-arrow-trend-up mr-1"></i>【マニュアル追加用】昇華KW <span
                                             class="text-[10px] text-gray-400 ml-1 font-normal">(語句, 入札額)</span>
                                         <span id="countKwUp"
                                             class="bg-green-500/20 text-green-300 text-xs px-2 py-0.5 rounded ml-2">0</span>
                                     </h3>
+                                    <p class="text-[10px] text-green-300/70 mt-1"><i class="fa-solid fa-circle-info mr-1"></i>完全一致でマニュアルCPに登録</p>
                                 </div>
                                 <button onclick="copyToClipboard('outKwUp')"
                                     class="text-gray-400 hover:text-white transition-colors" title="コピー"><i
                                         class="fa-regular fa-copy"></i></button>
                             </div>
                             <textarea id="outKwUp" readonly
+                                class="input-glass w-full flex-grow p-3 rounded-lg resize-none text-xs font-mono"></textarea>
+                        </div>
+
+                        <!-- 【オート除外用】昇華キーワード -->
+                        <div class="glass-panel p-5 border-t-4 border-t-cyan-500 flex flex-col h-[350px]">
+                            <div class="flex justify-between items-center mb-3">
+                                <div class="group relative">
+                                    <h3 class="text-md font-bold text-cyan-400 flex items-center cursor-help">
+                                        <i class="fa-solid fa-shield-halved mr-1"></i>【オート除外用】昇華KW
+                                        <span id="countKwAutoEx"
+                                            class="bg-cyan-500/20 text-cyan-300 text-xs px-2 py-0.5 rounded ml-2">0</span>
+                                    </h3>
+                                    <p class="text-[10px] text-cyan-300/70 mt-1"><i class="fa-solid fa-circle-info mr-1"></i>オートCPに完全一致の除外KWとして登録</p>
+                                </div>
+                                <button onclick="copyToClipboard('outKwAutoExclude')"
+                                    class="text-gray-400 hover:text-white transition-colors" title="コピー"><i
+                                        class="fa-regular fa-copy"></i></button>
+                            </div>
+                            <textarea id="outKwAutoExclude" readonly
                                 class="input-glass w-full flex-grow p-3 rounded-lg resize-none text-xs font-mono"></textarea>
                         </div>
 
@@ -1034,6 +1060,7 @@
             const exAsins = [];
             const exKws = [];
             const upKws = [];
+            const autoExKws = []; // オート除外用キーワードリスト（カニバリズム防止）
             const details = [];
 
             // リセット
@@ -1076,10 +1103,10 @@
                     totalWastedClicks += clicks;
                 }
 
-                // == ロジック： 昇華基準（購入1以上かつ目標ACOS以下） ==
-                if (!resultType && orders >= 1 && acos <= targetAcos) {
+                // == ロジック： 昇華基準（SOP準拠: 購入2以上かつ目標ACOS以下） ==
+                if (!resultType && orders >= 2 && acos <= targetAcos) {
                     resultType = "昇華";
-                    reason = `購入${orders}件, ACOS ${acos.toFixed(1)}% (高パフォーマンス)`;
+                    reason = `購入${orders}件, ACOS ${acos.toFixed(1)}% (SOP基準クリア: 購入2件以上+目標ACOS以下)`;
 
                     if (clicks > 0 && sales > 0) {
                         const cvr = orders / clicks;
@@ -1099,6 +1126,8 @@
                     } else if (resultType === "昇華") {
                         const bidOutput = calculatedBid !== "-" ? calculatedBid : '';
                         upKws.push(`${term}, ${bidOutput}`);
+                        // カニバリズム防止: オートCP除外用リストにも同時追加
+                        autoExKws.push(term);
                     }
 
                     details.push({
@@ -1126,7 +1155,7 @@
                 sortDataArray(currentSortColumn, isAscending);
             }
 
-            renderResults(exAsins, exKws, upKws);
+            renderResults(exAsins, exKws, upKws, autoExKws);
             renderTable();
             updateSortIcons();
 
@@ -1244,7 +1273,7 @@
             }, 1800);
         }
 
-        function renderResults(exAsins, exKws, upKws) {
+        function renderResults(exAsins, exKws, upKws, autoExKws) {
             document.getElementById('resultsContainer').classList.remove('hidden');
 
             document.getElementById('outAsin').value = exAsins.join('\n');
@@ -1255,6 +1284,10 @@
 
             document.getElementById('outKwUp').value = upKws.join('\n');
             document.getElementById('countKwUp').textContent = upKws.length;
+
+            // オート除外用リスト（カニバリズム防止）
+            document.getElementById('outKwAutoExclude').value = autoExKws.join('\n');
+            document.getElementById('countKwAutoEx').textContent = autoExKws.length;
         }
 
         function renderTable() {
